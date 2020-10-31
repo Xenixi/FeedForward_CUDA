@@ -3,6 +3,8 @@
         "*.cu": "cpp",
         "*.cuh": "cpp",
         "ostream": "cpp",
-        "ratio": "cpp"
+        "ratio": "cpp",
+        "iterator": "cpp",
+        "iostream": "cpp"
     }
 }

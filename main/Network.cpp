@@ -3,9 +3,6 @@
 #include <math.h>
 #include <fstream>
 #include <sstream>
-#include "cuda.h"
-#include "device_launch_parameters.h"
-#include "cuda_runtime.h"
 #include <vector>
 #include "NetworkBackbone.cuh"
 
@@ -16,8 +13,7 @@ int main(void)
     NetworkBackbone n(/*Input*/ 784, /*Output*/ 10, /*Hidden*/ 200);
 
     float *inputs, *targets;
-    cudaMallocManaged(&inputs, sizeof(float) * n.getInputQuantity());
-    cudaMallocManaged(&targets, sizeof(float) * n.getInputQuantity());
+    //read files into this
 
     std::cout << "Reading inputs..." << std::endl;
 
@@ -52,15 +48,10 @@ int main(void)
     }
 
     std::cout << "Test - Total: " << i << std::endl;
-   
+
     auto time2 = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(time2 - time1).count();
     std::cout << "Completed.\nTime taken: " << duration << "ms" << std::endl;
-
-    cudaFree(inputs);
-    cudaFree(targets);
-
-
 
     return 0;
 }

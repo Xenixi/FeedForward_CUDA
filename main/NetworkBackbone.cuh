@@ -2,8 +2,10 @@
 #define ANNETWORK_H
 
 
-struct NetworkBackbone
+class NetworkBackbone
 {
+   
+    public:
     struct NodeParams
     {
         int iNodes, oNodes, hNodes;

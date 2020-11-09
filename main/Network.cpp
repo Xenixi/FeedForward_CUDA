@@ -14,7 +14,10 @@ int main(void)
 
     float *inputs, *targets;
     //read files into this
-
+    std::cout << "Getting device info..." << std::endl;
+    std::cout << "Device SMs: " << n.getDeviceProperties()[0] << std::endl;
+    std::cout << "Device Threads/block: " << n.getDeviceProperties()[1] << std::endl;
+    std::cout << "Device Threads/multiprocessor: " << n.getDeviceProperties()[2] << std::endl;
     std::cout << "Reading inputs..." << std::endl;
 
     auto time1 = std::chrono::high_resolution_clock::now();

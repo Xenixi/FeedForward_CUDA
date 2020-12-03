@@ -1,9 +1,12 @@
 //#include "Network.cuh"
 #include <iostream>
 #include <math.h>
+#include <random>
 #include "NetworkBackbone.cuh"
+
+// https://youtu.be/5IkodnY0PeY?t=592
 //runs on GPU
-__global__ void initWeights(float *weightsInputHidden, float *weightsHiddenOutput, int iNodes, int hNodes, int oNodes){
+/*__global__ void initWeights(float *weightsInputHidden, float *weightsHiddenOutput, int iNodes, int hNodes, int oNodes){
     int idx = blockDim.x * blockIdx.x + threadIdx.x, stride = blockDim.x * gridDim.x;
     
     for(int i = idx; i < hNodes*iNodes; i+=stride){
@@ -13,7 +16,7 @@ __global__ void initWeights(float *weightsInputHidden, float *weightsHiddenOutpu
 
     }
 }
-
+*/
 __global__ void trainNetwork(float *inputs, float *targets, int iNodes, int hNodes, int oNodes)
 {
 
@@ -73,8 +76,26 @@ NetworkBackbone::NetworkBackbone(int iNodes, int oNodes, int hNodes)
     np.hNodes = hNodes;
 
     //initialization
+    float *weightsInputsHidden, *weightsHiddenOutput;
 
+    cudaMallocManaged(&weightsInputsHidden, sizeof(float)*np.iNodes*np.hNodes);
+    cudaMallocManaged(&weightsHiddenOutput, sizeof(float)*np.hNodes*np.oNodes);
 
+    init(weightsInputsHidden, weightsHiddenOutput, np.iNodes, np.hNodes, np.oNodes);
+
+}
+/****************
+intiialization
+****************/
+void NetworkBackbone::init(float *weightsInputHidden, float *weightsHiddenOutput, int iNodes, int hNodes, int oNodes){
+    for(int i=0; i<(iNodes*hNodes); i++){
+        std::random_device rnd;
+        std::mt19937 mt1(rnd());
+        std::uniform_real_distribution<float> dist(-0.5,0.5);
+
+        weightsInputHidden[i] = dist(mt1);
+        std::cout << "val_" << i << ": " << weightsInputHidden[i] << std::endl;
+    }
 }
 
 void NetworkBackbone::train(float *inputs, float *targets)

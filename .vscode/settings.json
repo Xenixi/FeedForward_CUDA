@@ -5,6 +5,7 @@
         "ostream": "cpp",
         "ratio": "cpp",
         "iterator": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "chrono": "cpp"
     }
 }

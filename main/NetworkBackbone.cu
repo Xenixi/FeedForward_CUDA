@@ -7,7 +7,7 @@ __global__ void initWeights(float *weightsInputHidden, float *weightsHiddenOutpu
     int idx = blockDim.x * blockIdx.x + threadIdx.x, stride = blockDim.x * gridDim.x;
     
     for(int i = idx; i < hNodes*iNodes; i+=stride){
-
+        
     } 
     for(int i = idx; i < hNodes*oNodes; i+=stride){
 

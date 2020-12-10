@@ -19,12 +19,20 @@
 */
 __global__ void trainNetwork(float *inputs, float *targets, int iNodes, int hNodes, int oNodes)
 {
-
-
 }
 
-__global__ void queryNetwork(float *inputs)
+__global__ void queryNetwork(float *inputs, float *weightsInputHidden, float *weightsHiddenOutput, int iNodes, int hNodes, int oNodes)
 {
+    int idx = blockDim.x * blockIdx.x + threadIdx.x, stride = blockDim.x * gridDim.x;
+    //CONTINUE HERE PG 132 PYTHON BOOK & http://luniak.io/cuda-neural-network-implementation-part-1/#implementation-plan
+    //
+    for (int i = idx; i < iNodes; i += stride)
+    {
+        inputs[i] = inputs[i] * weightsInputHidden[i];
+        inputs[i] = activation(inputs[i]);
+        inputs[i] = inputs[i] * weightsHiddenOutput[i];
+        inputs[i] = activation(inputs[i]);
+    }
 }
 
 __device__ float activation(float input)
@@ -78,20 +86,21 @@ NetworkBackbone::NetworkBackbone(int iNodes, int oNodes, int hNodes)
     //initialization
     float *weightsInputsHidden, *weightsHiddenOutput;
 
-    cudaMallocManaged(&weightsInputsHidden, sizeof(float)*np.iNodes*np.hNodes);
-    cudaMallocManaged(&weightsHiddenOutput, sizeof(float)*np.hNodes*np.oNodes);
+    cudaMallocManaged(&weightsInputsHidden, sizeof(float) * np.iNodes * np.hNodes);
+    cudaMallocManaged(&weightsHiddenOutput, sizeof(float) * np.hNodes * np.oNodes);
 
     init(weightsInputsHidden, weightsHiddenOutput, np.iNodes, np.hNodes, np.oNodes);
-
 }
 /****************
 intiialization
 ****************/
-void NetworkBackbone::init(float *weightsInputHidden, float *weightsHiddenOutput, int iNodes, int hNodes, int oNodes){
-    for(int i=0; i<(iNodes*hNodes); i++){
+void NetworkBackbone::init(float *weightsInputHidden, float *weightsHiddenOutput, int iNodes, int hNodes, int oNodes)
+{
+    for (int i = 0; i < (iNodes * hNodes); i++)
+    {
         std::random_device rnd;
         std::mt19937 mt1(rnd());
-        std::uniform_real_distribution<float> dist(-0.5,0.5);
+        std::uniform_real_distribution<float> dist(-0.5, 0.5);
 
         weightsInputHidden[i] = dist(mt1);
         std::cout << "val_" << i << ": " << weightsInputHidden[i] << std::endl;
@@ -116,8 +125,12 @@ void NetworkBackbone::train(float *inputs, float *targets)
     cudaFree(inputs);
     cudaFree(targets);
 }
-void NetworkBackbone::query(float *inputs)
+void NetworkBackbone::query(float *inputs, float *weightsInputHidden, float *weightsHiddenOutput, int iNodes, int hNodes, int oNodes)
 {
+    int blocks = (getDeviceProperties()[0] * getDeviceProperties()[2] / getDeviceProperties()[1]);
+    int blockThreads = getDeviceProperties()[1];
+
+    queryNetwork<<<blocks, blockThreads>>>(inputs, weightsInputHidden, weightsHiddenOutput, iNodes, hNodes, oNodes);
 }
 int NetworkBackbone::getInputQuantity()
 {

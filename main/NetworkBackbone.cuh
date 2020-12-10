@@ -22,7 +22,7 @@ public:
     };
     NetworkBackbone(int iNodes, int oNodes, int hNodes);
     void train(float *inputs, float *targets);
-    void query(float *inputs);
+    void query(float *inputs, float *weightsInputHidden, float *weightsHiddenOutput, int iNodes, int hNodes, int oNodes);
     void init(float *weightsInputHidden, float *weightsHiddenOutput, int iNodes, int hNodes, int oNodes);
     int getInputQuantity();
     int getOutputQuantity();

@@ -17,8 +17,27 @@
     }
 }
 */
-__global__ void trainNetwork(float *inputs, float *targets, int iNodes, int hNodes, int oNodes)
+__global__ void trainNetwork(float *inputs, float *targets, float *weightsInputHidden, float *weightsHiddenOutput, int iNodes, int hNodes, int oNodes)
 {
+    //  THE INPUT VARIABLE PASSED IN WILL BE REPLACED WITH THE RETURNED ERROR VALUES SO MAKE A COPY OF THE VARIABLE!!!!
+    int idx = blockDim.x * blockIdx.x + threadIdx.x, stride = blockDim.x * gridDim.x;
+
+    for (int i = idx; i < iNodes; i += stride)
+    {
+        inputs[i] = inputs[i] * weightsInputHidden[i];
+        inputs[i] = activation(inputs[i]);
+        inputs[i] = inputs[i] * weightsHiddenOutput[i];
+        inputs[i] = activation(inputs[i]);
+        inputs[i] = weightsHiddenOutput[i] * inputs[i];
+        inputs[i] = activation(inputs[i]);
+
+        inputs[i] = targets[i] - inputs[i];
+        ///LINE 66 LEFT OFF (PYTHON PROGRAM)
+
+        ///NUMPY.TRANSPOSE LINES AND STUFF FROM THE PYTHON (LINE 71 IN THE OTHER PROGRAM - )
+
+
+    }
 }
 
 __global__ void queryNetwork(float *inputs, float *weightsInputHidden, float *weightsHiddenOutput, int iNodes, int hNodes, int oNodes)

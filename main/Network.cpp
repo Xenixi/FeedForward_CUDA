@@ -10,7 +10,13 @@ int main(void)
 {
 
     std::cout << "hello" << std::endl;
+
+
+    //this will automatically generate random weights upon initialization 
+    //(Takes time, but this can be improved with CUDA down the road)
     NetworkBackbone n(/*Input*/ 784, /*Output*/ 10, /*Hidden*/ 200);
+
+    
 
     float *inputs, *targets;
     //read files into this
